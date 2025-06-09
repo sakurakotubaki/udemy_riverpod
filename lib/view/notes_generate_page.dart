@@ -2,8 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:udemy_riverpod/domain/notes_domain.dart';
 import 'package:udemy_riverpod/model/notes_model.dart';
 import 'package:udemy_riverpod/state/note_notifier.dart';
+import 'package:udemy_riverpod/view/next_view.dart';
+import 'package:udemy_riverpod/view/notes_view_model.dart';
 
 class NoteGeneratePage extends ConsumerWidget {
   const NoteGeneratePage({super.key});
@@ -64,6 +67,22 @@ class NoteGeneratePage extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         final note = noteAppGenerater[index];
                         return ListTile(
+                          onTap: () {
+                            final notesDomain = NotesDomain(
+                              id: note.id,
+                              body: note.body,
+                              createdAt: note.createdAt,
+                            );
+
+                            ref
+                                .read(notesViewModelProvider.notifier)
+                                .updateNotes(notesDomain);
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => NextView(),
+                              ),
+                            );
+                          },
                           title: Text(
                             'id: $note memo: ${note.body}',
                           ), // idとフォームから入力された値を表示.
