@@ -14,7 +14,7 @@ class UserViewModel extends _$UserViewModel {
     // 通常はロジックを直接呼ぶこともできる。
     // final response = await UserDatasource().fetchUsers();
     // interfaceを使った場合。Providerを使用して、ref.read()で呼び出す。
-    final response = await ref.read(userInterfaceProviderProvider).fetchUsers();
+    final response = await ref.read(userInterfaceProvider).fetchUsers();
     return response;
   }
 }

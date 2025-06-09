@@ -5,7 +5,7 @@ import 'package:udemy_riverpod/AsyncNotifier/model/user_state.dart';
 part 'user_interface.g.dart';
 
 @riverpod
-UserInterface userInterfaceProvider(Ref ref) {
+UserInterface userInterface(Ref ref) {
   final UserDatasource userDatasource = UserDatasource();
   return UserInterfaceImpl(userDatasource);
 }
