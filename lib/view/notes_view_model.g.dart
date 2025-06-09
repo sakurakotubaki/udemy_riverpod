@@ -8,7 +8,10 @@ part of 'notes_view_model.dart';
 
 String _$notesViewModelHash() => r'c2249fae815ffbe22c6d8b66674cd0e195679835';
 
-/// See also [NotesViewModel].
+/// [@Riverpod(keepAlive: true)]だとアプリ全体で値が共有される。
+/// [画面遷移]しても状態が保持される。
+///
+/// Copied from [NotesViewModel].
 @ProviderFor(NotesViewModel)
 final notesViewModelProvider =
     NotifierProvider<NotesViewModel, NotesDomain>.internal(
