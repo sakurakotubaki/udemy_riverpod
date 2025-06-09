@@ -79,12 +79,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
     // WebSocketからのメッセージを監視
     ref.listen<AsyncValue<String>>(webSocketStreamProvider, (previous, next) {
       if (next is AsyncData<String>) {
-        // setState(() {
         _messages.add({
           'text': next.value,
           'isMe': false,
           'time': DateTime.now(),
-          // });
         });
       }
     });
