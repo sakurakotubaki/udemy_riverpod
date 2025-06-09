@@ -1,0 +1,12 @@
+targets:
+  $default:
+    builders:
+      freezed:
+        options:
+          # Dart 3.7以降を使用している場合、falseにすると大幅に高速化
+          format: false
+          copy_with: false
+          equal: false
+          # 必要に応じて他のオプションも無効化
+          # to_string: false
+          # map: false
