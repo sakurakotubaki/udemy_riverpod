@@ -8,7 +8,13 @@ part of 'main.dart';
 
 String _$webSocketStreamHash() => r'0cb45c13aa135477e874fae783737cc8a4391d8a';
 
-/// See also [webSocketStream].
+/// [webSocketStreamProvider]は、WebSocketからのメッセージを非同期で取得するためのプロバイダーです。/// このプロバイダーは、WebSocketの接続を管理し、メッセージのストリームを提供します。
+/// - WebSocketの接続先は`wss://echo.websocket.events`です。
+/// - プロバイダーは、WebSocketのストリームを返します。
+/// - プロバイダーが破棄されるときにWebSocketを閉じるために、`ref.onDispose`を使用しています。
+/// - WebSocketからのメッセージは、`String`型としてキャストされます。
+///
+/// Copied from [webSocketStream].
 @ProviderFor(webSocketStream)
 final webSocketStreamProvider = AutoDisposeStreamProvider<String>.internal(
   webSocketStream,
