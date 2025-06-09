@@ -28,7 +28,12 @@ typedef SharedPreferencesAsyncRef =
     AutoDisposeFutureProviderRef<SharedPreferencesAsync>;
 String _$tutorialStateHash() => r'c717bce4e0ce77b9874f175c7fe7c9707ae69fa5';
 
-/// See also [tutorialState].
+/// [TutorialStateProvider]は、アプリのチュートリアルの状態を非同期で取得するためのプロバイダーです。
+/// このプロバイダーは、SharedPreferencesを使用して、ユーザーがアプリを初めて起動したかどうかを判定します。
+/// - 初回起動時は`TutorialState.first`を返し、チュートリアルを表示します。
+/// - 2回目以降の起動時は`TutorialState.second`を返し、チュートリアルを表示しません。
+///
+/// Copied from [tutorialState].
 @ProviderFor(tutorialState)
 final tutorialStateProvider = AutoDisposeFutureProvider<TutorialState>.internal(
   tutorialState,
