@@ -46,6 +46,9 @@ class ConnectivityPage extends ConsumerWidget {
                   SnackBar(content: Text('現在の状態: ${_getStatusText(status)}')),
                 );
               }
+              // プロバイダーを再読み込みして最新の状態を取得
+              // これにより、UIが更新されます
+              ref.invalidate(connectivityPlusNotifierProvider);
             },
           ),
         ],
@@ -56,12 +59,12 @@ class ConnectivityPage extends ConsumerWidget {
           children: [
             // ネットワーク状態表示
             switch (connectivityAsync) {
-              AsyncData(:final value) => _buildNetworkStatusCard(
+              AsyncData(:final value) => _BuildNetworkStatusCard(
                 context,
                 value,
               ),
-              AsyncError(:final error) => _buildErrorCard(context, error),
-              _ => const CircularProgressIndicator(),
+              AsyncError(:final error) => _BuildErrorCard(context, error),
+              _ => const Text('状態を取得中...'),
             },
 
             const SizedBox(height: 20),
@@ -69,7 +72,7 @@ class ConnectivityPage extends ConsumerWidget {
             // オフライン時の警告表示
             switch (connectivityAsync) {
               AsyncData(:final value) when value == NetworkStatus.offline =>
-                _buildOfflineWarning(context),
+                _BuildOffLineWarning(context),
               _ => const SizedBox.shrink(),
             },
           ],
@@ -78,7 +81,31 @@ class ConnectivityPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildNetworkStatusCard(BuildContext context, NetworkStatus status) {
+  String _getStatusText(NetworkStatus status) {
+    switch (status) {
+      case NetworkStatus.wifiOnline:
+        return 'WiFi接続中';
+      case NetworkStatus.mobileOnline:
+        return 'モバイルデータ接続中';
+      case NetworkStatus.ethernetOnline:
+        return 'イーサネット接続中';
+      case NetworkStatus.otherOnline:
+        return 'その他のネットワーク接続中';
+      case NetworkStatus.offline:
+        return 'オフライン';
+      case NetworkStatus.unknown:
+        return '不明';
+    }
+  }
+}
+
+class _BuildNetworkStatusCard extends StatelessWidget {
+  const _BuildNetworkStatusCard(this.context, this.status);
+  final BuildContext context;
+  final NetworkStatus status;
+
+  @override
+  Widget build(BuildContext context) {
     final (icon, color, title, subtitle) = _getStatusInfo(status);
 
     return Card(
@@ -105,108 +132,7 @@ class ConnectivityPage extends ConsumerWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
-            _buildStatusChips(status),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatusChips(NetworkStatus status) {
-    return Wrap(
-      spacing: 8,
-      children: [
-        Chip(
-          label: Text('オンライン: ${status.isOnline ? "はい" : "いいえ"}'),
-          backgroundColor: status.isOnline
-              ? Colors.green.shade100
-              : Colors.red.shade100,
-          avatar: Icon(
-            status.isOnline ? Icons.check_circle : Icons.error,
-            color: status.isOnline ? Colors.green : Colors.red,
-            size: 18,
-          ),
-        ),
-        if (status.isWifi)
-          Chip(
-            label: const Text('WiFi接続'),
-            backgroundColor: Colors.blue.shade100,
-            avatar: const Icon(Icons.wifi, color: Colors.blue, size: 18),
-          ),
-        if (status.isMobile)
-          Chip(
-            label: const Text('モバイルデータ'),
-            backgroundColor: Colors.orange.shade100,
-            avatar: const Icon(
-              Icons.signal_cellular_alt,
-              color: Colors.orange,
-              size: 18,
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildOfflineWarning(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.red.shade50,
-        border: Border.all(color: Colors.red.shade300),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.warning_amber, color: Colors.red.shade600),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'オフライン状態',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red.shade700,
-                  ),
-                ),
-                Text(
-                  'インターネット接続が利用できません。WiFiまたはモバイルデータ接続を確認してください。',
-                  style: TextStyle(color: Colors.red.shade600),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildErrorCard(BuildContext context, Object error) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.error_outline, size: 64, color: Colors.red),
-            const SizedBox(height: 16),
-            Text(
-              'エラーが発生しました',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              error.toString(),
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
+            _BuildStatusChips(status),
           ],
         ),
       ),
@@ -244,21 +170,124 @@ class ConnectivityPage extends ConsumerWidget {
         return (Icons.help_outline, Colors.grey, '不明', 'ネットワークの状態を確認できません');
     }
   }
+}
 
-  String _getStatusText(NetworkStatus status) {
-    switch (status) {
-      case NetworkStatus.wifiOnline:
-        return 'WiFi接続中';
-      case NetworkStatus.mobileOnline:
-        return 'モバイルデータ接続中';
-      case NetworkStatus.ethernetOnline:
-        return 'イーサネット接続中';
-      case NetworkStatus.otherOnline:
-        return 'その他のネットワーク接続中';
-      case NetworkStatus.offline:
-        return 'オフライン';
-      case NetworkStatus.unknown:
-        return '不明';
-    }
+class _BuildStatusChips extends StatelessWidget {
+  const _BuildStatusChips(this.status);
+  final NetworkStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      children: [
+        Chip(
+          label: Text('オンライン: ${status.isOnline ? "はい" : "いいえ"}'),
+          backgroundColor: status.isOnline
+              ? Colors.green.shade100
+              : Colors.red.shade100,
+          avatar: Icon(
+            status.isOnline ? Icons.check_circle : Icons.error,
+            color: status.isOnline ? Colors.green : Colors.red,
+            size: 18,
+          ),
+        ),
+        if (status.isWifi)
+          Chip(
+            label: const Text('WiFi接続'),
+            backgroundColor: Colors.blue.shade100,
+            avatar: const Icon(Icons.wifi, color: Colors.blue, size: 18),
+          ),
+        if (status.isMobile)
+          Chip(
+            label: const Text('モバイルデータ'),
+            backgroundColor: Colors.orange.shade100,
+            avatar: const Icon(
+              Icons.signal_cellular_alt,
+              color: Colors.orange,
+              size: 18,
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _BuildOffLineWarning extends StatelessWidget {
+  const _BuildOffLineWarning(this.context);
+  final BuildContext context;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.red.shade50,
+        border: Border.all(color: Colors.red.shade300),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.warning_amber, color: Colors.red.shade600),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'オフライン状態',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red.shade700,
+                  ),
+                ),
+                Text(
+                  'インターネット接続が利用できません。WiFiまたはモバイルデータ接続を確認してください。',
+                  style: TextStyle(color: Colors.red.shade600),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BuildErrorCard extends StatelessWidget {
+  const _BuildErrorCard(this.context, this.error);
+  final BuildContext context;
+  final Object error;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      margin: const EdgeInsets.all(16),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, size: 64, color: Colors.red),
+            const SizedBox(height: 16),
+            Text(
+              'エラーが発生しました',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              error.toString(),
+              style: Theme.of(context).textTheme.bodyMedium,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
