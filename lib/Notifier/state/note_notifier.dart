@@ -1,5 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:udemy_riverpod/model/notes_model.dart';
+import 'package:udemy_riverpod/Notifier/model/notes_model.dart';
 part 'note_notifier.g.dart';
 
 @riverpod
