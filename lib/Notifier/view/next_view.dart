@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:udemy_riverpod/view/notes_view_model.dart';
+import 'package:udemy_riverpod/Notifier/view/notes_view_model.dart';
 
 class NextView extends ConsumerWidget {
   const NextView({super.key});

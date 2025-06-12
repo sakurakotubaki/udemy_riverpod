@@ -1,5 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:udemy_riverpod/domain/notes_domain.dart';
+import 'package:udemy_riverpod/Notifier/domain/notes_domain.dart';
 part 'notes_view_model.g.dart';
 
 /// [@Riverpod(keepAlive: true)]だとアプリ全体で値が共有される。
