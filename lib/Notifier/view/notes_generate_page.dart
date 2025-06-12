@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:udemy_riverpod/Notifier/domain/notes_domain.dart';
-import 'package:udemy_riverpod/model/notes_model.dart';
+import 'package:udemy_riverpod/Notifier/model/notes_model.dart';
 import 'package:udemy_riverpod/Notifier/state/note_notifier.dart';
 import 'package:udemy_riverpod/Notifier/view/next_view.dart';
 import 'package:udemy_riverpod/Notifier/view/notes_view_model.dart';
